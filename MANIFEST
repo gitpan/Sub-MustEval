@@ -1,0 +1,8 @@
+./t/00-depend.t
+./t/10-in-eval.t
+./t/01-module.t
+./lib/Sub/MustEval.pm
+./Makefile.PL
+./README
+./MANIFEST
+META.yml                                 Module meta-data (added by MakeMaker)

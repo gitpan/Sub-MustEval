@@ -1,0 +1,11 @@
+This dies with a stack trace (via Carp::confess) if
+the attributed subroutine cannot find an eval on the
+stack. 
+
+This is useful for sub's that know they throw what
+should be non-fatal exceptions or for calls inside
+of long-running processes that need to decide quickly
+if they have been called properly.
+
+This is generally more useful in testing than production,
+but can also be useful for tracking down failures.
