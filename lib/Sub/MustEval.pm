@@ -10,12 +10,12 @@ package Sub::MustEval;
 
 use strict;
 
-use Carp;
+use Carp qw( cluck );
 use Symbol;
 
 use version;
 
-our $VERSION = qv( '0.0.1' );
+our $VERSION = qv( '0.0.2' );
 
 use Attribute::Handlers;
 
@@ -44,18 +44,29 @@ sub UNIVERSAL::MustEval :ATTR(CODE)
 
   my $name  = join '::', *{$install}{PACKAGE}, *{$install}{NAME}; 
 
+  no warnings 'redefine';
+
   *{ $install }
   = sub
   {
     my $i = -1;
 
-    while( my @caller = caller ++$i )
+    while( my $caller = ( caller ++$i )[3] )
     {
       goto &$wrapped
-      if $caller[3] =~ m{ ^ \( eval \b }x;
+      if $caller =~ m{ ^ \( eval \b }x;
     }
 
-    confess qq{Fatal: '$name' called outside of any eval};
+    # fall through the eval check: complain about it
+    # and wrap the code here.
+
+    cluck qq{Fatal: '$name' called outside of any eval};
+
+    my $return = eval { &$wrapped };
+    
+    carp $@ if $@;
+
+    $return
   };
 }
 
